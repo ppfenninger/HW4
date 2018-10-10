@@ -141,6 +141,88 @@ output reg		Clk
     $display("Test Case 2 Failed");
   end
 
+  // Test Case 3: 
+  // Testing to see if Write Enable is broken / ignored
+  WriteRegister = 5'd2;
+  WriteData = 32'd15;
+  RegWrite = 1;
+  ReadRegister1 = 5'd2;
+  ReadRegister2 = 5'd2;
+  #5 Clk=1; #5 Clk=0;
+
+  WriteRegister = 5'd2;
+  WriteData = 32'd12;
+  RegWrite = 0;
+  ReadRegister1 = 5'd2;
+  ReadRegister2 = 5'd2;
+  #5 Clk=1; #5 Clk=0;
+
+  if((ReadData1 !== 15) || (ReadData2 !== 15)) begin
+    dutpassed = 0;
+    $display("Test Case 3 Failed");
+  end
+
+  // Test Case 4: 
+  // Testing to see if Decoder is broken (all registers are written to)
+  WriteRegister = 5'd20;
+  WriteData = 32'd15;
+  RegWrite = 1;
+  ReadRegister1 = 5'd20;
+  ReadRegister2 = 5'd20;
+  #5 Clk=1; #5 Clk=0;
+
+  WriteRegister = 5'd1;
+  WriteData = 32'd32;
+  RegWrite = 1;
+  ReadRegister1 = 5'd20;
+  ReadRegister2 = 5'd1;
+  #5 Clk=1; #5 Clk=0;
+
+  if((ReadData1 !== 15) || (ReadData2 !== 32)) begin
+    dutpassed = 0;
+    $display("Test Case 4 Failed");
+  end
+
+  // Test Case 5: 
+  // Testing to see if Register Zero is the constant zero
+  WriteRegister = 5'd0; // will try to write to register zero
+  WriteData = 32'd15;
+  RegWrite = 1;
+  ReadRegister1 = 5'd0;
+  ReadRegister2 = 5'd0;
+  #5 Clk=1; #5 Clk=0;
+
+  if((ReadData1 !== 0) || (ReadData2 !== 0)) begin
+    dutpassed = 0;
+    $display("Test Case 5 Failed");
+  end
+
+  // Test Case 6: 
+  // Testing to see that both ports work correctly
+  WriteRegister = 5'd20;
+  WriteData = 32'd15;
+  RegWrite = 1;
+  ReadRegister1 = 5'd20;
+  ReadRegister2 = 5'd20;
+  #5 Clk=1; #5 Clk=0;
+
+  if((ReadData1 !== 15) || (ReadData2 !== 15)) begin
+    dutpassed = 0;
+    $display("Test Case 6.1 Failed");
+  end
+
+  WriteRegister = 5'd1;
+  WriteData = 32'd76;
+  RegWrite = 1;
+  ReadRegister1 = 5'd1;
+  ReadRegister2 = 5'd1;
+  #5 Clk=1; #5 Clk=0;
+
+  if((ReadData1 !== 76) || (ReadData2 !== 76)) begin
+    dutpassed = 0;
+    $display("Test Case 6.2 Failed");
+  end
+
 
   // All done!  Wait a moment and signal test completion.
   #5
